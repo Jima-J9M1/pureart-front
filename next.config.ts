@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
       {
         hostname: 'localhost',
       },
+      {
+        hostname: 'pureart-strapi.onrender.com',
+      },
     ],
   },
 };
