@@ -5,7 +5,9 @@ import {
   TagResponse, 
   GlobalResponse,
   SingleItemResponse,
-  StrapiCategory
+  StrapiCategory,
+  ArtistResponse,
+  Artist
 } from '@/types/strapi';
 
 const API_URL = process?.env?.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
@@ -127,6 +129,38 @@ export async function getGlobal() {
   };
   return fetchAPI<GlobalResponse>({
     path: '/global-value',
+    urlParamsObject: params
+  });
+}
+
+export async function getArtists(params = {}) {
+  const defaultParams = {
+    populate: ['profileImage', 'featuredImage'],
+  };
+  const mergedParams = {
+    ...defaultParams,
+    ...params,
+  };
+  return fetchAPI<ArtistResponse>({
+    path: '/artists',
+    urlParamsObject: mergedParams
+  });
+}
+
+export async function getArtist(slug: string) {
+  const params = {
+    filters: { slug },
+    populate: [
+      'profileImage',
+      'featuredImage',
+      'artworks',
+      'artworks.mainImage',
+      'artworks.category',
+      'artworks.tags',
+    ],
+  };
+  return fetchAPI<ArtistResponse>({
+    path: '/artists',
     urlParamsObject: params
   });
 } 

@@ -99,6 +99,28 @@ export interface Artwork {
   tags: StrapiTag[];
 }
 
+// Artist Type
+export interface Artist {
+  id: number;
+  documentId: string;
+  name: string;
+  slug: string;
+  bio: string;
+  statement: string | null;
+  location: string;
+  website: string | null;
+  email: string | null;
+  instagram: string | null;
+  facebook: string | null;
+  twitter: string | null;
+  profileImage: StrapiImage;
+  featuredImage: StrapiImage | null;
+  artworks: Artwork[];
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+}
+
 // API Response Types
 export interface StrapiResponse<T> {
   data: T;
@@ -117,6 +139,7 @@ export type ArtworkResponse = StrapiResponse<Artwork[]>;
 export type CategoryResponse = StrapiResponse<StrapiCategory[]>;
 export type TagResponse = StrapiResponse<StrapiTag[]>;
 export type GlobalResponse = StrapiResponse<StrapiGlobal>;
+export type ArtistResponse = StrapiResponse<Artist[]>;
 
 // Utility type for single item response
 export type SingleItemResponse<T> = StrapiResponse<T>; 
