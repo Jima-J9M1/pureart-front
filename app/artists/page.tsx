@@ -1,11 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { getArtists } from '@/lib/api';
-import { Artist } from '@/types/strapi';
+import { imageConstant } from '@/lib/constant/image-constant';
 
 export default async function ArtistsPage() {
   const artistsData = await getArtists();
-  const artists = artistsData.data || [];
+  const artists = artistsData?.data?.data || [];
 
   console.log("artists", artists);
 
@@ -35,10 +35,10 @@ export default async function ArtistsPage() {
                 <div className="bg-white rounded-lg overflow-hidden shadow-lg transition-all duration-300 group-hover:shadow-xl">
                   {/* Artist Image */}
                   <div className="relative aspect-[4/3] w-full overflow-hidden">
-                    {artist.FeaturedImage ? (
+                    {artist.featuredImage ? (
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_STRAPI_API_URL}${artist.FeaturedImage.formats.medium.url}`}
-                        alt={artist.Name}
+                        src={`${artist?.featuredImage?.formats?.medium?.url ?? imageConstant}`}
+                        alt={artist.name}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
@@ -51,10 +51,10 @@ export default async function ArtistsPage() {
 
                   {/* Artist Info */}
                   <div className="p-6">
-                    <h2 className="text-2xl font-bold mb-2">{artist.Name}</h2>
-                    <p className="text-gray-600 mb-4">{artist.Location}</p>
+                    <h2 className="text-2xl font-bold mb-2">{artist.name}</h2>
+                    <p className="text-gray-600 mb-4">{artist.location}</p>
                     <p className="text-gray-700 line-clamp-3 mb-4">
-                      {artist.Bio}
+                      {artist.bio}
                     </p>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-500">

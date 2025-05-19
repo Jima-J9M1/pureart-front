@@ -6,23 +6,32 @@ import {
   GlobalResponse,
   SingleItemResponse,
   StrapiCategory,
-  ArtistResponse,
-  Artist
+  ArtistResponse
 } from '@/types/strapi';
 
 const API_URL = process?.env?.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
 
 interface FetchAPIParams {
   path: string;
-  urlParamsObject?: Record<string, any>;
+  urlParamsObject?: Record<string, unknown>;
   options?: RequestInit;
+}
+
+interface APIResponse<T> {
+  data: T | null;
+  error: {
+    message: string;
+    status?: number;
+    statusText?: string;
+    details?: unknown;
+  } | null;
 }
 
 export async function fetchAPI<T>({
   path,
   urlParamsObject = {},
   options = {}
-}: FetchAPIParams): Promise<T> {
+}: FetchAPIParams): Promise<APIResponse<T>> {
   try {
     const mergedOptions = {
       headers: {
@@ -36,18 +45,58 @@ export async function fetchAPI<T>({
     const requestUrl = `${API_URL}/api${path}${
       queryString ? `?${queryString}` : ''
     }`;
-
+    console.log("requestUrl", requestUrl);
     const response = await fetch(requestUrl, mergedOptions);
-    
+    console.log("response", response);
     if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
+      const errorData = await response.json().catch(() => null);
+      return {
+        data: null,
+        error: {
+          message: 'API request failed',
+          status: response.status,
+          statusText: response.statusText,
+          details: errorData
+        }
+      };
     }
     
     const data = await response.json();
-    return data as T;
+    return {
+      data: data as T,
+      error: null
+    };
   } catch (error) {
-    console.error('API Error:', error);
-    throw new Error(`Please check if your server is running and you set all the required tokens.`);
+    if (error instanceof Error) {
+      if (error.message.includes('ECONNREFUSED')) {
+        return {
+          data: null,
+          error: {
+            message: 'Unable to connect to the API server. Please ensure the server is running.',
+            status: 503,
+            statusText: 'Service Unavailable'
+          }
+        };
+      }
+      return {
+        data: null,
+        error: {
+          message: 'An unexpected error occurred while fetching data',
+          status: 500,
+          statusText: 'Internal Server Error',
+          details: error.message
+        }
+      };
+    }
+
+    return {
+      data: null,
+      error: {
+        message: 'An unknown error occurred',
+        status: 500,
+        statusText: 'Internal Server Error'
+      }
+    };
   }
 }
 
@@ -135,7 +184,7 @@ export async function getGlobal() {
 
 export async function getArtists(params = {}) {
   const defaultParams = {
-    populate: ['profileImage', 'featuredImage'],
+    populate: ['profileImage', 'featuredImage', 'artworks', 'artworks.mainImage', 'artworks.category', 'artworks.tags'],
   };
   const mergedParams = {
     ...defaultParams,

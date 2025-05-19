@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { getFeaturedArtworks, getGlobal, getArtworks } from '@/lib/api';
-import { Artwork, StrapiGlobal } from '@/types/strapi';
+import { Artwork } from '@/types/strapi';
+import { imageConstant } from '@/lib/constant/image-constant';
 
 export default async function Home() {
   const featuredArtworksData = await getFeaturedArtworks(3);
@@ -10,10 +11,12 @@ export default async function Home() {
     sort: ['createdAt:desc'],
     pagination: { limit: 6 }
   });
+
   
-  const featuredArtworks = featuredArtworksData.data || [];
-  const newArtworks = newArtworksData.data || [];
+  const featuredArtworks = featuredArtworksData.data?.data || [];
+  const newArtworks = newArtworksData.data?.data || [];
   const global = globalData.data;
+  console.log(featuredArtworks[0].mainImage.formats);
 
   return (
     <main className="min-h-screen">
@@ -22,7 +25,7 @@ export default async function Home() {
         {featuredArtworks[0]?.mainImage && (
           <div className="absolute inset-0">
             <Image
-              src={`${process.env.NEXT_PUBLIC_STRAPI_API_URL}${featuredArtworks[0].mainImage.formats.large.url}`}
+              src={`${featuredArtworks[0]?.mainImage?.formats?.large?.url ?? imageConstant }`}
               alt={featuredArtworks[0].title}
               fill
               className="object-cover"
@@ -33,10 +36,10 @@ export default async function Home() {
         )}
         <div className="relative h-full container mx-auto px-4 flex flex-col items-center justify-center text-center text-white">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
-            {global?.siteName || 'Art Gallery'}
+            {global?.data.siteName || 'Art Gallery'}
           </h1>
           <p className="text-xl md:text-2xl max-w-3xl mb-10 font-light">
-            {global?.siteDescription || 'Discover unique and beautiful artwork from talented artists.'}
+            {global?.data.siteDescription || 'Discover unique and beautiful artwork from talented artists.'}
           </p>
           <div className="flex gap-4">
             <Link
@@ -79,7 +82,7 @@ export default async function Home() {
                   {artwork.mainImage && (
                     <div className="relative aspect-[4/3] w-full overflow-hidden">
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_STRAPI_API_URL}${artwork.mainImage.formats.medium.url}`}
+                        src={`${artwork.mainImage.formats.medium.url ?? imageConstant}`}
                         alt={artwork.title}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -133,7 +136,7 @@ export default async function Home() {
                   {artwork.mainImage && (
                     <div className="relative aspect-[4/3] w-full overflow-hidden">
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_STRAPI_API_URL}${artwork.mainImage.formats.medium.url}`}
+                        src={`${artwork.mainImage.formats.medium.url ?? imageConstant}`}
                         alt={artwork.title}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -193,7 +196,7 @@ export default async function Home() {
           <p className="text-lg text-gray-700 mb-8 leading-relaxed">
             We showcase a curated collection of exceptional artworks spanning various styles and mediums. 
             Our mission is to connect art lovers with unique pieces that inspire and transform spaces.
-            Each artwork tells a story, and we're here to help you find the perfect piece for your collection.
+            Each artwork tells a story, and we&apos;re here to help you find the perfect piece for your collection.
           </p>
           <div className="flex justify-center gap-8">
             <div className="text-center">

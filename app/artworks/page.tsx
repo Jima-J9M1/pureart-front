@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getArtworks } from '@/lib/api';
 import { Artwork } from '@/types/strapi';
+import { imageConstant } from '@/lib/constant/image-constant';
 
 export default async function ArtworksPage() {
   const artworksData = await getArtworks({
@@ -9,16 +10,16 @@ export default async function ArtworksPage() {
     sort: ['createdAt:desc'],
   });
   
-  const artworks = artworksData.data || [];
+  const artworks = artworksData.data?.data || [];
 
   return (
     <main className="container mx-auto px-4 py-12">
       <h1 className="text-4xl font-bold mb-8">Artwork Gallery</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {artworks.map((artwork) => (
+        {(artworks as Artwork[]).map((artwork: Artwork) => (
           <Link 
-            href={`/artworks/${artwork.slug}`} 
+            href={`/artworks/${artwork?.slug}`} 
             key={artwork.id}
             className="group"
           >
@@ -26,7 +27,7 @@ export default async function ArtworksPage() {
               {artwork.mainImage && (
                 <div className="relative h-64 w-full">
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_STRAPI_API_URL}${artwork.mainImage.formats.medium.url}`}
+                    src={`${artwork?.mainImage?.formats?.medium?.url ?? imageConstant}`}
                     alt={artwork.title}
                     fill
                     className="object-cover"

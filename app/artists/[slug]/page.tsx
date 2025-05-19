@@ -3,16 +3,17 @@ import Link from 'next/link';
 import { getArtist } from '@/lib/api';
 import { notFound } from 'next/navigation';
 import { Artist, ArtistResponse } from '@/types/strapi';
+import { imageConstant } from '@/lib/constant/image-constant';
 
 export default async function ArtistDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const slug = (await params).slug;
-  const artistData = await getArtist(slug) as ArtistResponse;
+  const artistData = await getArtist(slug);
   console.log("artistData", artistData.data);
   if (!artistData.data) {
     notFound();
   }
 
-  const artist: Artist = artistData.data[0];
+  const artist: Artist = artistData.data.data[0];
 
   return (
     <main className="min-h-screen bg-white">
@@ -21,7 +22,7 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ s
         {artist.featuredImage && (
           <div className="absolute inset-0">
             <Image
-              src={`${process.env.NEXT_PUBLIC_STRAPI_API_URL}${artist.featuredImage.formats.large.url}`}
+              src={`${artist.featuredImage.formats.large.url ?? imageConstant}`}
               alt={artist.name}
               fill
               className="object-cover"
@@ -74,7 +75,7 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ s
                       {artwork.mainImage && (
                         <div className="relative aspect-[4/3] w-full overflow-hidden">
                           <Image
-                            src={`${process.env.NEXT_PUBLIC_STRAPI_API_URL}${artwork.mainImage.formats.medium.url}`}
+                            src={`${artwork.mainImage.formats.medium.url ?? imageConstant}`}
                             alt={artwork.title}
                             fill
                             className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -108,7 +109,7 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ s
               {artist.profileImage && (
                 <div className="relative aspect-square w-full">
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_STRAPI_API_URL}${artist.profileImage.formats.medium.url}`}
+                    src={`${artist.profileImage.formats.medium.url ?? imageConstant}`}
                     alt={artist.name}
                     fill
                     className="object-cover"

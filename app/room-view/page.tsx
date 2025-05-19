@@ -1,13 +1,13 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
-import GalleryContent from '../components/GalleryContent';
+import RoomViewContent from '../components/RoomViewContent';
 
 export const metadata: Metadata = {
-  title: 'Gallery - EB Art',
-  description: 'Browse our collection of contemporary artworks.',
+  title: 'View in Room - EB Art',
+  description: 'See how artwork looks in your space with our room viewer.',
 };
 
-export default function GalleryPage() {
+export default function RoomViewPage() {
   return (
     <Suspense 
       fallback={
@@ -16,7 +16,7 @@ export default function GalleryPage() {
         </div>
       }
     >
-      <GalleryContent />
+      <RoomViewContent />
     </Suspense>
   );
-} 
+}
