@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { getFeaturedArtworks, getGlobal, getArtworks } from '@/lib/api';
-import { Artwork } from '@/types/strapi';
 import { imageConstant } from '@/lib/constant/image-constant';
 
 export default async function Home() {
@@ -16,7 +15,6 @@ export default async function Home() {
   const featuredArtworks = featuredArtworksData.data?.data || [];
   const newArtworks = newArtworksData.data?.data || [];
   const global = globalData.data;
-  console.log(featuredArtworks[0].mainImage.formats);
 
   return (
     <main className="min-h-screen">

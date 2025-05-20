@@ -5,7 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 
 
 export const metadata: Metadata = {
-  title: 'EB Art - Contemporary Art Gallery',
+  title: 'Pure Art - Contemporary Art Gallery',
   description: 'Explore unique contemporary artworks and connect with the artist.',
 };
 

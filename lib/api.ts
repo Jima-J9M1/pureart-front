@@ -45,9 +45,7 @@ export async function fetchAPI<T>({
     const requestUrl = `${API_URL}/api${path}${
       queryString ? `?${queryString}` : ''
     }`;
-    console.log("requestUrl", requestUrl);
     const response = await fetch(requestUrl, mergedOptions);
-    console.log("response", response);
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
       return {
